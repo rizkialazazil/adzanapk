@@ -1,4 +1,4 @@
-package com.example.adzanapp;
+package com.example.adzan;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,6 +20,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gauravk.audiovisualizer.base.BaseVisualizer;
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+import com.gauravk.audiovisualizer.visualizer.WaveVisualizer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.android.gms.ads.AdRequest;
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnable;
     private AdzanModel currentAdzan;
     private AdView adView;
-    private BlastVisualizer blastVisualizer;
+    private WaveVisualizer waveVisualizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         textLatin = findViewById(R.id.textLatin);
         textIndo = findViewById(R.id.textIndo);
         btnPlayPause = findViewById(R.id.btnPlayPause);
-        blastVisualizer = findViewById(R.id.blast);
+        waveVisualizer = findViewById(R.id.waveVisualizer);
 
-        // Minta permission RECORD_AUDIO saat runtime jika belum diberikan
+        // Permission RECORD_AUDIO
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -76,11 +79,13 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_RECORD_AUDIO_PERMISSION);
         }
 
+        // Iklan AdMob
         MobileAds.initialize(this, initializationStatus -> {});
         adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
+        // Data Adzan
         List<AdzanModel> adzanList = loadAdzanDataFromAssets();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         AdzanAdapter adapter = new AdzanAdapter(this, adzanList, this::playAdzan);
@@ -102,19 +107,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("MainActivity", "Record audio permission granted");
-            } else {
-                Log.e("MainActivity", "Record audio permission denied");
-                Toast.makeText(this, "Permission RECORD_AUDIO diperlukan untuk visualizer suara", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private void playAdzan(AdzanModel item) {
         if (mediaPlayer != null) {
             mediaPlayer.release();
@@ -127,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             mediaPlayer = new MediaPlayer();
-
             AssetFileDescriptor afd = getResources().openRawResourceFd(resId);
             if (afd == null) {
                 Log.e("MainActivity", "Audio resource not found: " + item.getAudioUrl());
@@ -150,15 +141,13 @@ public class MainActivity extends AppCompatActivity {
                 int sessionId = mediaPlayer.getAudioSessionId();
                 Log.d("MainActivity", "Audio Session ID: " + sessionId);
 
-                if (sessionId > 0 && blastVisualizer != null) {
+                if (sessionId > 0 && waveVisualizer != null) {
                     try {
-                        blastVisualizer.release();
-                        blastVisualizer.setAudioSessionId(sessionId);
+                        waveVisualizer.release();
+                        waveVisualizer.setAudioSessionId(sessionId);
                     } catch (Exception e) {
                         Log.e("MainActivity", "Failed to init visualizer: " + e.getMessage());
                     }
-                } else {
-                    Log.e("MainActivity", "Invalid audio session ID for visualizer.");
                 }
             });
 
@@ -166,9 +155,8 @@ public class MainActivity extends AppCompatActivity {
                 btnPlayPause.setImageResource(R.drawable.ic_play);
                 isPlaying = false;
                 stopUpdatingText();
-
-                if (blastVisualizer != null) {
-                    blastVisualizer.release();
+                if (waveVisualizer != null) {
+                    waveVisualizer.release();
                 }
             });
 
@@ -178,9 +166,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startUpdatingText() {
-        if (handler == null) {
-            handler = new Handler();
-        }
+        if (handler == null) handler = new Handler();
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -251,9 +238,12 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer = null;
         }
         stopUpdatingText();
-        if (blastVisualizer != null) {
-            blastVisualizer.release();
+
+
+        if (waveVisualizer != null) {
+            waveVisualizer.release();
         }
+
         super.onDestroy();
-    }
+    }
 }
