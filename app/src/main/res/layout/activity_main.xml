@@ -3,93 +3,92 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#375964"
+    android:background="#F5F5F5"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/headerBackground"
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/mesjid2" />
+        android:layout_height="280dp"
+        android:background="@drawable/bg1">
 
-    <LinearLayout
-        android:id="@+id/textContainer"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/headerBackground"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
-        android:padding="20dp">
-
-        <TextView
-            android:id="@+id/textArabic"
-            android:layout_width="wrap_content"
+        <!-- Teks Dzikir -->
+        <LinearLayout
+            android:id="@+id/textContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="الله أكبر الله أكبر"
-            android:textSize="26sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginBottom="4dp" />
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/textLatin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Allahu Akbar Allahu Akbar"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/textArabic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الله أكبر الله أكبر"
+                android:textSize="28sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="6dp" />
 
-        <TextView
-            android:id="@+id/textIndo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Allah Maha Besar"
-            android:textSize="16sp"
-            android:textColor="#DDDDDD"
-            android:gravity="center"
-            android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/textLatin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Allahu Akbar Allahu Akbar"
+                android:textSize="18sp"
+                android:textColor="#F0F0F0"
+                android:gravity="center"
+                android:layout_marginBottom="4dp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textIndo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Allah Maha Besar"
+                android:textSize="16sp"
+                android:textColor="#DDDDDD"
+                android:gravity="center" />
+        </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btnPlayPause"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_below="@id/textContainer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_button_bg"
-        android:src="@drawable/ic_play"
-        android:tint="#FFFFFF"
-        android:elevation="4dp" />
+        <!-- Tombol Play di tengah -->
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_below="@id/textContainer"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_button_bg"
+            android:src="@drawable/ic_play"
+            android:tint="#FFFFFF"
+            android:elevation="6dp" />
 
-    <!-- Visualizer -->
-    <com.gauravk.audiovisualizer.visualizer.BlastVisualizer
-        android:id="@+id/blast"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@id/btnPlayPause"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        ads:avColor="@color/av_dark_blue"
-        ads:avDensity="0.8"
-        ads:avSpeed="normal"
-        ads:avType="fill" />
+        <!-- Wave Visualizer di bawah tombol -->
+        <com.gauravk.audiovisualizer.visualizer.WaveVisualizer
+            android:id="@+id/waveVisualizer"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@id/btnPlayPause"
+            android:layout_marginTop="12dp"
+            ads:avColor="#FFFFFF"
+            ads:avSpeed="normal"
+            ads:avType="fill"
+            ads:avDensity="0.9" />
+    </RelativeLayout>
 
     <!-- Daftar Adzan -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewAdzan"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/blast"
+        android:layout_below="@id/headerLayout"
         android:layout_above="@id/adView"
-        android:padding="12dp"
+        android:padding="16dp"
         android:clipToPadding="false" />
 
     <!-- Iklan AdMob -->
@@ -101,5 +100,4 @@
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
         android:layout_centerHorizontal="true" />
-
 </RelativeLayout>
